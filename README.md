@@ -22,6 +22,10 @@ source venv/bin/activate
 
 pip install -r requirements.txt
 
+### macOS 또는 Linux
+
+sudo apt install tesseract-ocr-eng tesseract-ocr-kor
+
 # 3. 프로젝트 실행
 
 모든 설정이 완료되면, 개발 서버를 실행하여 프로젝트를 시작할 수 있습니다.
