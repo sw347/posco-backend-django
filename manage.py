@@ -2,7 +2,7 @@
 """Django's command-line utility for administrative tasks."""
 import os
 import sys
-
+import paho.mqtt.client as mqtt
 
 def main():
     """Run administrative tasks."""
@@ -16,7 +16,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
-
+    
+    mqttc = mqtt.Client()
+    mqttc.connect("broker.mqtt-dashboard.com", 1883)
 
 if __name__ == '__main__':
     main()

@@ -9,8 +9,9 @@ import numpy as np
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from domain.change.views import braille_to_list
+import paho.mqtt.client as mqtt
 
-# 1. Tesseract 실행 파일 경로 설정
+# Tesseract 실행 파일 경로 설정
 # 설치 경로에 따라 달라질 수 있으니 확인하세요.
 
 # Windows
@@ -18,11 +19,21 @@ from domain.change.views import braille_to_list
 
 # Linux 또는 macOS
 pytesseract.pytesseract.tesseract_cmd = r'/usr/bin/tesseract'
+
+# Tesseract 설정
 config_string = '--psm 6 --oem 1'
+
+# 한글 띄어쓰기 교정을 위한 Spacing
 spacing = Spacing()
+
+# MQTT 클라이언트 설정
+mqttc = mqtt.Client()
+mqttc.connect("broker.mqtt-dashboard.com", 1883)
 
 @csrf_exempt
 def ocr_process_view(request):
+    mqttc.connect("broker.mqtt-dashboard.com", 1883)
+    
     """
     multipart/form-data로 이미지를 받아 OCR 처리 후 텍스트를 반환합니다.
     """
@@ -42,9 +53,14 @@ def ocr_process_view(request):
             
             spaced_text = spacing(text)
             
-            # 4. 결과를 JSON 응답으로 반환
-            return JsonResponse({"ocr_dots": braille_to_list(spaced_text)}, status=200)
-
+            # 4. OCR 결과를 점자로 변환
+            result = braille_to_list(spaced_text)
+            
+            # 5. MQTT를 통해 결과 전송
+            mqttc.publish("posco_jamo", json.dumps(result))
+            
+            # 6. 결과를 JSON 응답으로 반환
+            return JsonResponse({'dots': result}, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     
