@@ -54,13 +54,16 @@ def ocr_process_view(request):
             spaced_text = spacing(text)
             
             # 4. OCR 결과를 점자로 변환
-            result = braille_to_list(spaced_text)
+            result = {
+              'original_text': spaced_text,
+              'posco_jamo': braille_to_list(spaced_text)
+            }
             
             # 5. MQTT를 통해 결과 전송
             mqttc.publish("posco_jamo", json.dumps(result))
             
             # 6. 결과를 JSON 응답으로 반환
-            return JsonResponse({'dots': result}, status=200)
+            return JsonResponse(result, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     

@@ -17,15 +17,18 @@ def change_text(request):
     recevied_text = request.GET.get('text')
         
     if not recevied_text:
-      return JsonResponse({'error': 'text query parameter is missing'}, stataus=400)
+      return JsonResponse({'error': 'text query parameter is missing'}, status=400)
         
     try:
       dot_result = louis.translateString(["braille-patterns.cti", "ko-g1.ctb"], recevied_text)
-      result = braille_to_list(dot_result)
+      result = {
+        'original_text': recevied_text,
+        'posco_jamo': braille_to_list(dot_result)
+      }
+            
+      mqttc.publish("posco_jamo", json.dumps(result))
       
-      mqttc.publish("posco", json.dumps(result))
-      
-      return JsonResponse({'dots': result}, status = 200)
+      return JsonResponse(result, status = 200)
     except Exception as e:
       error_details = {
           "error": "An error occurred during Braille translation.",
