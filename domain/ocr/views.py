@@ -10,6 +10,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from domain.change.views import braille_to_list
 import paho.mqtt.client as mqtt
+import time
+import louis
 
 # Tesseract 실행 파일 경로 설정
 # 설치 경로에 따라 달라질 수 있으니 확인하세요.
@@ -39,6 +41,8 @@ def ocr_process_view(request):
     """
     if request.method == 'POST':
         try:
+            start_time = time.time()
+            
             # 1. request.FILES에서 업로드된 이미지 파일 가져오기
             if 'image' not in request.FILES:
                 return JsonResponse({"error": "요청에 이미지 파일이 없습니다"}, status=400)
@@ -53,17 +57,28 @@ def ocr_process_view(request):
             
             spaced_text = spacing(text)
             
+            braille_chars = louis.translateString(["braille-patterns.cti", "ko-g1.ctb"], spaced_text)
+            
+            end_time = time.time()
+            elapsed_time = end_time - start_time
+            print(f"Total processing time: {elapsed_time:.4f} seconds")
+            
+            dot_list = braille_to_list(braille_chars)
+            
             # 4. OCR 결과를 점자로 변환
             result = {
               'original_text': spaced_text,
-              'posco_jamo': braille_to_list(spaced_text)
+              'posco_jamo': dot_list['one_dimension']
             }
             
             # 5. MQTT를 통해 결과 전송
             mqttc.publish("posco_jamo", json.dumps(result))
             
             # 6. 결과를 JSON 응답으로 반환
-            return JsonResponse(result, status=200)
+            json_result = {
+                'posco_jamo': dot_list['two_dimension']
+            }
+            return JsonResponse(json_result, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
     

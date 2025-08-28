@@ -27,7 +27,7 @@ def braille_to_list(braille_string):
       dot_pattern[5] = 1
 
     result_list.append(dot_pattern)
-
+  
   flat_list = list(itertools.chain.from_iterable(result_list))
   
-  return flat_list
+  return { 'one_dimension': flat_list, 'two_dimension': result_list }
