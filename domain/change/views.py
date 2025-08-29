@@ -39,7 +39,7 @@ def change_text(request):
       mqttc.publish("posco_jamo", json.dumps(result))
       
       json_result = {
-        'posco_jamo': dot_list['two_dimension']
+        'posco_jamo': braille_chars
       }
       return JsonResponse(json_result, status = 200)
     except Exception as e:
