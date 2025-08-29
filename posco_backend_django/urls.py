@@ -22,4 +22,5 @@ urlpatterns = [
     # ocr_app의 URL 패턴을 포함.
     path('ocr/', include('domain.ocr.urls')),
     path('change/', include('domain.change.urls')),
+    path('stages/', include('domain.stage.urls')),
 ]
