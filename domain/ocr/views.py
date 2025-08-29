@@ -76,6 +76,7 @@ def ocr_process_view(request):
             
             # 6. 결과를 JSON 응답으로 반환
             json_result = {
+                'original_text': spaced_text,
                 'posco_jamo': dot_list['two_dimension']
             }
             return JsonResponse(json_result, status=200)
