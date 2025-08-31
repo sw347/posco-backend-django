@@ -10,7 +10,7 @@ def to_dot(w, model = "ko-g1.ctb"):
    braille_chars = louis.translateString(["braille-patterns.cti", model], w)
    return {
       "word": w,
-      "dot": braille_to_list(braille_chars)["two_dimension"]
+      "dot": braille_chars
    }
 
 
