@@ -22,8 +22,7 @@ def change_text(request):
         
     try:
       start_time = time.time()
-      
-      braille_chars = louis.translateString(["braille-patterns.cti", "ko-g1.ctb"], recevied_text)
+      braille_chars = louis.translateString(["braille-patterns.cti", "ko-g2.ctb"], recevied_text)
       
       end_time = time.time()
       elapsed_time = end_time - start_time

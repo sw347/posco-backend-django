@@ -94,7 +94,7 @@ def ocr_process_view(request):
             
             spaced_text = spacing(text)
             
-            braille_chars = louis.translateString(["braille-patterns.cti", "ko-g1.ctb"], spaced_text)
+            braille_chars = louis.translateString(["braille-patterns.cti", "ko-g2.ctb"], spaced_text)
             
             end_time = time.time()
             elapsed_time = end_time - start_time

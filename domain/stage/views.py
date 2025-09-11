@@ -6,7 +6,7 @@ from .models.level import Level
 from .models.words import Words
 from .models.region import Region
 
-def to_dot(w, model = "ko-g1.ctb"):
+def to_dot(w, model = "ko-g2.ctb"):
    braille_chars = louis.translateString(["braille-patterns.cti", model], w)
    return {
       "word": w,
@@ -47,9 +47,9 @@ def get_stages(request):
 
         match region:
            case Region.KO_KR:
-              table = "ko-g1.ctb"        
+              table = "ko-g2.ctb"        
            case Region.EN_US:
-              table = "en-us-g1.ctb"
+              table = "en-us-g2.ctb"
 
         wordWithDots = list(map(lambda w: to_dot(w, model=table), words))
 
