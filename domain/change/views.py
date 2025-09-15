@@ -4,7 +4,6 @@ from domain.utils.dot_to_list import braille_to_list
 import louis
 import paho.mqtt.client as mqtt
 import json
-import time
 
 # MQTT 클라이언트 설정
 mqttc = mqtt.Client()
@@ -16,18 +15,14 @@ def change_text(request):
     mqttc.connect("broker.mqtt-dashboard.com", 1883)
 
     recevied_text = request.GET.get('text')
+    device = request.GET.get('device')
         
     if not recevied_text:
       return JsonResponse({'error': 'text query parameter is missing'}, status=400)
         
     try:
-      start_time = time.time()
       braille_chars = louis.translateString(["braille-patterns.cti", "ko-g2.ctb"], recevied_text)
       
-      end_time = time.time()
-      elapsed_time = end_time - start_time
-      print(f"Total processing time: {elapsed_time:.4f} seconds")
-            
       dot_list = braille_to_list(braille_chars)
       
       result = {
@@ -35,7 +30,7 @@ def change_text(request):
         'posco_jamo': dot_list['one_dimension']
       }
             
-      mqttc.publish("posco_jamo", json.dumps(result))
+      mqttc.publish(f"posco_jamo/{device}", json.dumps(result))
       
       json_result = {
         'posco_jamo': braille_chars

@@ -20,6 +20,8 @@ def get_stages(request):
     level_text = request.GET.get('level')
     region_text = request.GET.get('region', 'ko_kr')
     
+    device = request.GET.get('device')
+    
     region_text = region_text.lower()
 
     if not level_text:
