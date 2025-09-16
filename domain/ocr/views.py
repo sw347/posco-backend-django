@@ -16,7 +16,7 @@ load_dotenv()
 
 API_KEY = os.environ.get('API_KEY')
 url = "https://api.upstage.ai/v1/document-digitization"
-headers = {"Authorization": f"Bearer {api_key}"}
+headers = {"Authorization": f"Bearer {API_KEY}"}
 
 # 한글 띄어쓰기 교정을 위한 Spacing
 spacing = Spacing()
