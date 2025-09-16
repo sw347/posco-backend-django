@@ -15,6 +15,7 @@ import base64
 load_dotenv()
 
 API_KEY = os.environ.get('API_KEY')
+print(API_KEY)
 url = "https://api.upstage.ai/v1/document-digitization"
 headers = {"Authorization": f"Bearer {API_KEY}"}
 
