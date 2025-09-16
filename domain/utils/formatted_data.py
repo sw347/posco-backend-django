@@ -1,6 +1,7 @@
 import itertools
 from domain.utils.dot_to_list import braille_to_list
 from domain.utils.format_display import format_braille_for_display
+from domain.utils.post_process import post_process_braille
 
 MAX_DISPLAY_CHARS = 16
 BLANK_BRAILLE_CELL = [0, 0, 0, 0, 0, 0]
