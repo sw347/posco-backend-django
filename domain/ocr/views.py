@@ -11,6 +11,7 @@ import louis
 from dotenv import load_dotenv
 import requests
 import base64
+import itertools
 
 load_dotenv()
 
