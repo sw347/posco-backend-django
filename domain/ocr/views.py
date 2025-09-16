@@ -77,9 +77,11 @@ def ocr_process_view(request):
             
             mqttc.publish(f"posco_jamo/{device}", json.dumps(result))
             
+            flattened_2d_array = list(itertools.chain.from_iterable(formatted_data['json_data']))
+            
             json_result = {
                 'original_text': spaced_text,
-                'posco_jamo': formatted_data['json_data']
+                'posco_jamo': flattened_2d_array
             }
             return JsonResponse(json_result, status=200)
         except Exception as e:
