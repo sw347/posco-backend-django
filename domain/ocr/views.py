@@ -5,7 +5,7 @@ import os
 import numpy as np
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from domain.change.views import braille_to_list
+from domain.utils.formatted_data import get_formatted_braille_data
 import paho.mqtt.client as mqtt
 import louis
 from dotenv import load_dotenv
@@ -38,9 +38,20 @@ def ocr_process_view(request):
             uploaded_file = request.FILES['image']
             device = request.POST.get('device')
             
-            file_bytes = np.asarray(bytearray(uploaded_file.read()), dtype=np.uint8)
+            if uploaded_file is None:
+                return JsonResponse({"error": "업로드된 파일이 유효하지 않습니다"}, status=400)
             
-            files = {'document': uploaded_file.open()}
+            img = Image.open(uploaded_file)
+            max_size = (1024, 1024)
+            img.thumbnail(max_size)
+            img = img.convert('L')
+            
+            from io import BytesIO
+            img_buffer = BytesIO()
+            img.save(img_buffer, format="JPEG")
+            img_buffer.seek(0)
+            
+            files = {'document': ('image.jpeg', img_buffer.getvalue(), 'image/jpeg')}
             data = {"model": "ocr"}
             
             response = requests.post(url, headers=headers, files=files, data=data)
@@ -57,18 +68,20 @@ def ocr_process_view(request):
             
             braille_chars = louis.translateString(["braille-patterns.cti", "ko-g2.ctb"], spaced_text)
            
-            dot_list = braille_to_list(braille_chars)
+            formatted_data = get_formatted_braille_data(braille_chars)
+            
+            print(formatted_data)
             
             result = {
               'original_text': spaced_text,
-              'posco_jamo': dot_list['one_dimension']
+              'posco_jamo': formatted_data['mqtt_data']
             }
             
             mqttc.publish(f"posco_jamo/{device}", json.dumps(result))
             
             json_result = {
                 'original_text': spaced_text,
-                'posco_jamo': dot_list['two_dimension']
+                'posco_jamo': formatted_data['json_data']
             }
             return JsonResponse(json_result, status=200)
         except Exception as e:
