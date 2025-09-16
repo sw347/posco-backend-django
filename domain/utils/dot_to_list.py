@@ -1,7 +1,6 @@
 import itertools
 
-BRAILLE_BLANK_CHAR = "⠀"
-BRAILLE_SPACE_CHAR = "⠠"
+BLANK_BRAILLE_CELL = [0, 0, 0, 0, 0, 0]
 
 def braille_to_list(braille_string):
   result_list = []
