@@ -7,12 +7,13 @@ def braille_to_list(braille_string):
   result_list = []
 
   braille_base_code = 0x2800
-  
-  braille_string = braille_string.replace(BRAILLE_SPACE_CHAR, BRAILLE_BLANK_CHAR)
 
   for char in braille_string:
-
     char_code = ord(char)
+    
+    if char == ' ':
+      result_list.append(BLANK_BRAILLE_CELL)
+      continue
 
     pattern_value = char_code - braille_base_code
 

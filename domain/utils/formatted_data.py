@@ -6,7 +6,8 @@ MAX_DISPLAY_CHARS = 16
 BLANK_BRAILLE_CELL = [0, 0, 0, 0, 0, 0]
 
 def get_formatted_braille_data(braille_string):
-    lines = format_braille_for_display(braille_string)
+    processed_braille_string = post_process_braille(braille_string)
+    lines = format_braille_for_display(processed_braille_string)
     
     mqtt_braille_chunks = []
     json_braille_chunks = []
