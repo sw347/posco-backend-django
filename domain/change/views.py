@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from domain.utils.dot_to_list import braille_to_list
+from domain.utils.formatted_data import get_formatted_braille_data
 import louis
 import paho.mqtt.client as mqtt
 import json
@@ -23,12 +23,14 @@ def change_text(request):
     try:
       braille_chars = louis.translateString(["braille-patterns.cti", "ko-g2.ctb"], recevied_text)
       
-      dot_list = braille_to_list(braille_chars)
-      
+      formatted_data = get_formatted_braille_data(braille_chars)
+            
       result = {
         'original_text': recevied_text,
-        'posco_jamo': dot_list['one_dimension']
+        'posco_jamo': formatted_data['mqtt_data']
       }
+      
+      print(f"json data {formatted_data['json_data']}")
             
       mqttc.publish(f"posco_jamo/{device}", json.dumps(result))
       

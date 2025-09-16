@@ -70,8 +70,6 @@ def ocr_process_view(request):
            
             formatted_data = get_formatted_braille_data(braille_chars)
             
-            print(formatted_data)
-            
             result = {
               'original_text': spaced_text,
               'posco_jamo': formatted_data['mqtt_data']
